@@ -58,7 +58,7 @@ function socketTools() {
     });
 
     const intervalCrash = () => {
-      if (number < 0.2) {
+      if (number < crashUpdateData.data.position) {
         console.log(
           "-------------->",
           number.toFixed(2),
