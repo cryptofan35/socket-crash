@@ -9,7 +9,7 @@ const httpServer = https.createServer(express);
 const ToolForEvent = require("./socket.js")();
 
 const io = socketIo(httpServer, {
-  path: "/websocket",
+  path: "/",
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
