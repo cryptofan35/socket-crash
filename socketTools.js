@@ -29,13 +29,13 @@ function socketTools() {
     clearInterval(interval);
     console.log(`User connected: ${socket.id}`);
 
-    io.emit("working", "1");
-    io.emit("prepareplane", "6");
-    io.emit("flyplane", "7");
+    socket.emit("working", "1");
+    socket.emit("prepareplane", "6");
+    socket.emit("flyplane", "7");
 
     // Emit the 'crash-update' event with generated data when a user connects
     crashUpdateData = generateCrashUpdate();
-    io.emit(crashUpdateData.event, 0);
+    socket.emit(crashUpdateData.event, 0);
 
     let number = 0;
     let intervalTime = 500;
@@ -65,22 +65,22 @@ function socketTools() {
           crashUpdateData.data.position
         );
         number += 0.01;
-        io.emit(crashUpdateData.event, number.toFixed(2));
+        socket.emit(crashUpdateData.event, number.toFixed(2));
       } else {
         console.log("crash plane");
 
-        io.emit("updatehistory", number);
-        io.emit("reset", number);
-        io.emit("removecrash", number);
+        socket.emit("updatehistory", number);
+        socket.emit("reset", number);
+        socket.emit("removecrash", number);
         number = 0;
 
         clearInterval(interval);
         crashUpdateData = generateCrashUpdate();
 
         setTimeout(() => {
-          io.emit("prepareplane", "6");
-          io.emit("working", "1");
-          io.emit("flyplane", "7");
+          socket.emit("prepareplane", "6");
+          socket.emit("working", "1");
+          socket.emit("flyplane", "7");
           interval = setInterval(intervalCrash, intervalTime);
         }, 5000);
       }
