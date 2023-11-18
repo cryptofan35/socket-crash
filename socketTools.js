@@ -5,13 +5,18 @@ let io;
 let crashUpdateData;
 // Function to generate crash update data with a rapidly changing plane movement
 function generateCrashUpdate() {
-  const currentPlanePosition = Math.abs(Math.random()) * 4; // Generate a positive value between 0 and 4
+  // Function to generate random number
+  function randomNumber(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  // Function call
+  const currentPlanePosition = randomNumber(1, 10).toFixed(2); // Generate a positive value between 0 and 4
 
   return {
     event: "crash-update",
     data: {
       position: currentPlanePosition.toFixed(2),
-      // Other relevant data for the crash update
     },
   };
 }
@@ -38,7 +43,7 @@ function socketTools() {
     socket.emit(crashUpdateData.event, 0);
 
     let number = 0;
-    let intervalTime = 500;
+    let intervalTime = 300;
     let totalAmount = 0;
     let cashOutAmount = 0;
     socket.on("addWin", (name, amount, winpoint) => {
@@ -58,7 +63,8 @@ function socketTools() {
     });
 
     const intervalCrash = () => {
-      if (number < crashUpdateData.data.position) {
+      // if (number < crashUpdateData.data.position) {
+      if (number < 0.2) {
         console.log(
           "-------------->",
           number.toFixed(2),
