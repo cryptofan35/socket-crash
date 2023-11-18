@@ -1,6 +1,5 @@
 const express = require("express")();
 const https = require("http");
-var mysql = require('mysql');
 require("dotenv").config();
 const db = require("./models");
 
