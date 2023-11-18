@@ -90,7 +90,7 @@ function socketTools() {
         socket.emit("updatehistory", number);
         socket.emit("reset", number);
         socket.emit("removecrash", number);
-        number = 0;
+        number = 1;
 
         clearInterval(interval);
         crashUpdateData = generateCrashUpdate();
