@@ -1,6 +1,7 @@
 "use strict";
 module.exports = socketTools;
-
+const db = require("./models");
+const Record = db.crashbetrecord;
 let io;
 let crashUpdateData;
 // Function to generate crash update data with a rapidly changing plane movement
@@ -11,7 +12,7 @@ function generateCrashUpdate() {
   }
 
   // Function call
-  const currentPlanePosition = randomNumber(1, 10).toFixed(2); // Generate a positive value between 0 and 4
+  const currentPlanePosition = randomNumber(1, 10); // Generate a positive value between 0 and 4
 
   return {
     event: "crash-update",
@@ -30,6 +31,7 @@ function socketTools() {
     io = _io;
     io.on("connection", onConnet);
   }
+
   function onConnet(socket) {
     clearInterval(interval);
     console.log(`User connected: ${socket.id}`);
@@ -46,8 +48,19 @@ function socketTools() {
     let intervalTime = 300;
     let totalAmount = 0;
     let cashOutAmount = 0;
-    socket.on("addWin", (name, amount, winpoint) => {
+
+    socket.on("addWin", async (name, amount, winpoint) => {
       cashOutAmount += amount + amount * winpoint;
+
+      const newRecord = {
+        username: name,
+        amount: amount,
+        status: 'success',
+        winpoint: winpoint
+      }
+      console.log(newRecord)
+      Record.create(newRecord).then().catch(err=>console.log(err))
+
       console.log(
         name,
         amount,
@@ -63,8 +76,7 @@ function socketTools() {
     });
 
     const intervalCrash = () => {
-      // if (number < crashUpdateData.data.position) {
-      if (number < 0.2) {
+      if (number < crashUpdateData.data.position) {
         console.log(
           "-------------->",
           number.toFixed(2),
