@@ -17,7 +17,7 @@ function generateCrashUpdate() {
   return {
     event: "crash-update",
     data: {
-      position: Number(currentPlanePosition).toFixed(2),
+      position: currentPlanePosition,
     },
   };
 }
@@ -44,7 +44,7 @@ function socketTools() {
     crashUpdateData = generateCrashUpdate();
     socket.emit(crashUpdateData.event, 0);
 
-    let number = 0;
+    let number = 1;
     let intervalTime = 300;
     let totalAmount = 0;
     let cashOutAmount = 0;
@@ -79,7 +79,7 @@ function socketTools() {
       if (number < crashUpdateData.data.position) {
         console.log(
           "-------------->",
-          number.toFixed(2),
+          number,
           crashUpdateData.data.position
         );
         number += 0.01;
