@@ -17,7 +17,7 @@ function generateCrashUpdate() {
   return {
     event: "crash-update",
     data: {
-      position: currentPlanePosition.toFixed(2),
+      position: Number(currentPlanePosition).toFixed(2),
     },
   };
 }
