@@ -47,7 +47,7 @@ function socketTools() {
 
     let number = 1;
     let betters = 0;
-    let intervalTime = 300;
+    let intervalTime = 100;
     let totalAmount = 0;
     let cashOutAmount = 0;
     let crashPoint = crashUpdateData.data.position
@@ -115,6 +115,16 @@ function socketTools() {
         console.log("crash plane");
 
         socket.emit("updatehistory", number);
+        socket.on("failed", async (name, amount)=>{
+          const newRecord = {
+            username: name,
+            amount: amount,
+            status: 'fail',
+            winpoint: crashPoint.toFixed(2)
+          }
+          console.log(newRecord)
+          await Record.create(newRecord)
+        })
         socket.emit("reset", number);
         socket.emit("removecrash", number);
         number = 1;
