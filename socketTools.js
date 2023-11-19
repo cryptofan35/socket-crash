@@ -67,21 +67,22 @@ function socketTools() {
       const limitAmount = totalAmount * 0.3
       
       if(cashOutAmount > limitAmount){
-        socket.emit("updatehistory", number);
-        socket.emit("reset", number);
-        socket.emit("removecrash", number);
-        number = 1;
+        // socket.emit("updatehistory", number);
+        // socket.emit("reset", number);
+        // socket.emit("removecrash", number);
+        // number = 1;
 
-        clearInterval(interval);
-        crashUpdateData = generateCrashUpdate();
-        crashPoint = crashUpdateData.data.position
+        // clearInterval(interval);
+        // crashUpdateData = generateCrashUpdate();
+        // crashPoint = crashUpdateData.data.position
 
-        setTimeout(() => {
-          socket.emit("prepareplane", "6");
-          socket.emit("working", "1");
-          socket.emit("flyplane", "7");
-          interval = setInterval(intervalCrash, intervalTime);
-        }, 5000);
+        // setTimeout(() => {
+        //   socket.emit("prepareplane", "6");
+        //   socket.emit("working", "1");
+        //   socket.emit("flyplane", "7");
+        //   interval = setInterval(intervalCrash, intervalTime);
+        // }, 5000);
+        number = crashPoint
       }
       
       console.log(
@@ -99,6 +100,17 @@ function socketTools() {
       console.log(name, amount, totalAmount, "here is total amount");
     });
 
+    socket.on("failed", async (name, amount, winpoint)=>{
+      const newRecord = {
+        username: name,
+        amount: amount,
+        status: 'fail',
+        winpoint: winpoint
+      }
+      console.log(newRecord)
+      await Record.create(newRecord)
+    })
+
     const intervalCrash = () => {
       if (number < crashPoint) {
         console.log(
@@ -115,24 +127,18 @@ function socketTools() {
         console.log("crash plane");
 
         socket.emit("updatehistory", number);
-        socket.on("failed", async (name, amount)=>{
-          const newRecord = {
-            username: name,
-            amount: amount,
-            status: 'fail',
-            winpoint: crashPoint.toFixed(2)
-          }
-          console.log(newRecord)
-          await Record.create(newRecord)
-        })
+        
         socket.emit("reset", number);
         socket.emit("removecrash", number);
         number = 1;
+        crashUpdateData = generateCrashUpdate();
+        console.log({crashUpdateData})
+        crashPoint = crashUpdateData.data.position
+        cashOutAmount = 0;
+        totalAmount = 0;
+        betters = 0;
 
         clearInterval(interval);
-        crashUpdateData = generateCrashUpdate();
-        crashPoint = crashUpdateData.data.position
-
         setTimeout(() => {
           socket.emit("prepareplane", "6");
           socket.emit("working", "1");
