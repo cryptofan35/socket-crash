@@ -43,11 +43,14 @@ function socketTools() {
     // Emit the 'crash-update' event with generated data when a user connects
     crashUpdateData = generateCrashUpdate();
     socket.emit(crashUpdateData.event, 0);
+    
 
     let number = 1;
+    let betters = 0;
     let intervalTime = 300;
     let totalAmount = 0;
     let cashOutAmount = 0;
+    let crashPoint = crashUpdateData.data.position
 
     socket.on("addWin", async (name, amount, winpoint) => {
       cashOutAmount += amount + amount * winpoint;
@@ -59,8 +62,28 @@ function socketTools() {
         winpoint: winpoint
       }
       console.log(newRecord)
-      Record.create(newRecord).then().catch(err=>console.log(err))
+      await Record.create(newRecord)
 
+      const limitAmount = totalAmount * 0.3
+      
+      if(cashOutAmount > limitAmount){
+        socket.emit("updatehistory", number);
+        socket.emit("reset", number);
+        socket.emit("removecrash", number);
+        number = 1;
+
+        clearInterval(interval);
+        crashUpdateData = generateCrashUpdate();
+        crashPoint = crashUpdateData.data.position
+
+        setTimeout(() => {
+          socket.emit("prepareplane", "6");
+          socket.emit("working", "1");
+          socket.emit("flyplane", "7");
+          interval = setInterval(intervalCrash, intervalTime);
+        }, 5000);
+      }
+      
       console.log(
         name,
         amount,
@@ -72,16 +95,20 @@ function socketTools() {
 
     socket.on("newBet", (name, amount) => {
       totalAmount += amount;
+      betters += 1;
       console.log(name, amount, totalAmount, "here is total amount");
     });
 
     const intervalCrash = () => {
-      if (number < crashUpdateData.data.position) {
+      if (number < crashPoint) {
         console.log(
           "-------------->",
           number,
-          crashUpdateData.data.position
+          crashPoint
         );
+        if(betters == 1){
+          crashPoint=1.1
+        }
         number += 0.01;
         socket.emit(crashUpdateData.event, number.toFixed(2));
       } else {
@@ -94,6 +121,7 @@ function socketTools() {
 
         clearInterval(interval);
         crashUpdateData = generateCrashUpdate();
+        crashPoint = crashUpdateData.data.position
 
         setTimeout(() => {
           socket.emit("prepareplane", "6");
