@@ -36,7 +36,6 @@ function socketTools() {
     clearInterval(interval);
     console.log(`User connected: ${socket.id}`);
 
-    socket.emit("working", "1");
     socket.emit("prepareplane", "6");
     socket.emit("flyplane", "7");
 
@@ -67,21 +66,6 @@ function socketTools() {
       const limitAmount = totalAmount * 0.3
       
       if(cashOutAmount > limitAmount){
-        // socket.emit("updatehistory", number);
-        // socket.emit("reset", number);
-        // socket.emit("removecrash", number);
-        // number = 1;
-
-        // clearInterval(interval);
-        // crashUpdateData = generateCrashUpdate();
-        // crashPoint = crashUpdateData.data.position
-
-        // setTimeout(() => {
-        //   socket.emit("prepareplane", "6");
-        //   socket.emit("working", "1");
-        //   socket.emit("flyplane", "7");
-        //   interval = setInterval(intervalCrash, intervalTime);
-        // }, 5000);
         number = crashPoint
       }
       
@@ -126,10 +110,10 @@ function socketTools() {
       } else {
         console.log("crash plane");
 
-        socket.emit("updatehistory", number);
+        socket.emit("updatehistory", number.toFixed(2));
         
-        socket.emit("reset", number);
-        socket.emit("removecrash", number);
+        socket.emit("reset", "resetting plane...");
+        socket.emit("removecrash");
         number = 1;
         crashUpdateData = generateCrashUpdate();
         console.log({crashUpdateData})
@@ -140,18 +124,15 @@ function socketTools() {
 
         clearInterval(interval);
         setTimeout(() => {
-          socket.emit("prepareplane", "6");
-          socket.emit("working", "1");
-          socket.emit("flyplane", "7");
+          socket.emit("prepareplane");
+          socket.emit("flyplane");
           interval = setInterval(intervalCrash, intervalTime);
         }, 5000);
       }
-    }; // Update the interval based on your requirement
+    }; 
 
     interval = setInterval(intervalCrash, intervalTime);
   }
-
-  // Emit the 'crash-update' event with generated data when a user connects
 
   async function getData() {
     try {
