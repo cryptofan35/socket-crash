@@ -17,6 +17,7 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
 const db = {};
 
 db.crashbetrecord = require("./Record")(sequelize, Sequelize);
+db.aviset = require("./Aviset")(sequelize, Sequelize);
 
 
 db.Sequelize = Sequelize;

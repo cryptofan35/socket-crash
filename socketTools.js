@@ -2,6 +2,7 @@
 module.exports = socketTools;
 const db = require("./models");
 const Record = db.crashbetrecord;
+const Aviset = db.aviset
 let io;
 let crashUpdateData;
 // Function to generate crash update data with a rapidly changing plane movement
@@ -67,6 +68,7 @@ function socketTools() {
       
       if(cashOutAmount > limitAmount){
         number = crashPoint
+        console.log('hahahahaha', number)
       }
       
       console.log(
@@ -95,7 +97,7 @@ function socketTools() {
       await Record.create(newRecord)
     })
 
-    const intervalCrash = () => {
+    const intervalCrash = async () => {
       if (number < crashPoint) {
         console.log(
           "-------------->",
@@ -107,9 +109,16 @@ function socketTools() {
         }
         number += 0.01;
         socket.emit(crashUpdateData.event, number.toFixed(2));
+        const aviset = await Aviset.findAll()
+        if(aviset[0].dataValues.nxt != 0){
+          crashPoint = aviset[0].dataValues.nxt
+        }
+
       } else {
         console.log("crash plane");
-
+        await Aviset.update({nxt: 0}, {
+          where: { id: 1 },
+        });
         socket.emit("updatehistory", number.toFixed(2));
         
         socket.emit("reset", "resetting plane...");
