@@ -16,7 +16,6 @@ module.exports = (sequelize, Sequelize) => {
         },
         winpoint:{
           type: Sequelize.STRING,
-          allowNull: false,
         },
         time: {
           type: Sequelize.DATE,
