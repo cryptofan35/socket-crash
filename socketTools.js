@@ -116,7 +116,7 @@ function socketTools() {
 
       } else {
         console.log("crash plane");
-        await Aviset.update({nxt: 0}, {
+        await Aviset.update({nxt: 0, id: 1}, {
           where: { id: 1 },
         });
         socket.emit("updatehistory", number.toFixed(2));
